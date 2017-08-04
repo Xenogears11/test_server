@@ -13,17 +13,16 @@ class MainHandler(tornado.web.RequestHandler):
 
     def post(self):
         print(self.request)
-        item = self.get_argument('item')
-        value = self.get_argument('value')
-        con = database.Connection()
-        con.add(item, value)
+        name = self.get_argument('name')
+        quantity = self.get_argument('quantity')
+        item = database.Items(name = name, quantity = quantity)
+        database.add(item)
 
 
 def make_app():
     return tornado.web.Application([
         (r"/hi", TestHandler),
-        (r"/get", MainHandler),
-        (r"/post", MainHandler),
+        (r"/items", MainHandler),
     ])
 
 if __name__ == "__main__":
