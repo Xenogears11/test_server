@@ -1,34 +1,29 @@
-import pyodbc
+'''from sqlalchemy import create_engine, MetaData, Table
 
-class Connection():
-    '''connection to db via pyodbc'''
+engine = create_engine('postgresql+psycopg2://user:user@localhost:5432/test')
+meta = MetaData(bind=engine)
+items = Table('items', meta, autoload = True, autoload_with = engine)'''
 
-    con_str = (
-        'DRIVER={PostgreSQL ODBC Driver(UNICODE)};'
-        'Server=localhost;'
-        'Port=5432;'
-        'Database=test;'
-        'Uid=user;'
-        'Pwd=user;'
-    )
+from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-    cnxn = None
+Base = declarative_base()
 
-    def __init__(self):
-        self.cnxn = pyodbc.connect(self.con_str)
-        self.cnxn.setdecoding(pyodbc.SQL_WCHAR, encoding='utf-8')
-        self.cnxn.setencoding(encoding='utf-8')
+class Items(Base):
+    __tablename__ = 'items'
+    id = Column(Integer, primary_key = True)
+    name = Column(String(30), nullable = False)
+    quantity = Column(Integer, nullable = False)
 
-    def add(self, item, value):
-        cursor = self.cnxn.cursor()
-        cursor.execute("insert into items(name, value) values (?, ?)",
-        item, int(value))
-        self.cnxn.commit()
+engine = create_engine('postgresql+psycopg2://user:user@localhost:5432/test')
 
+#create table
+#Base.metadata.create_all(engine)
+Base.metadata.bind = engine
 
-
-#cursor.execute('insert into test values (\'memes\')')
-#cnxn.commit();
-
-#cursor.execute('select * from test')
-#print(cursor.fetchone())
+def add(item : Items):
+    DBSession = sessionmaker(bind = engine)
+    session = DBSession()
+    session.add(item)
+    session.commit()
