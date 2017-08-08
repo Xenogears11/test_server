@@ -30,13 +30,6 @@ class MainHandler(tornado.web.RequestHandler):
         id = self.get_argument('id')
         database.delete(int(id))
 
-class ParamHandler(tornado.web.RequestHandler):
-    def get(self):
-        id = int(self.get_argument('id'))
-
-
-
-
 
 def dict(id, name, quantity):
     return {'id':id, 'name':name, 'quantity':quantity}
