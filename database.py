@@ -17,13 +17,31 @@ class Items(Base):
     quantity = Column(Integer, nullable = False)
 
 engine = create_engine('postgresql+psycopg2://user:user@localhost:5432/test')
-
+DBSession = sessionmaker(bind = engine)
 #create table
 #Base.metadata.create_all(engine)
 Base.metadata.bind = engine
 
 def add(item : Items):
-    DBSession = sessionmaker(bind = engine)
     session = DBSession()
     session.add(item)
     session.commit()
+    session.close()
+
+def get_all():
+    session = DBSession()
+    result = session.query(Items).all()
+    session.close()
+    return result
+
+def get(id):
+    session = DBSession()
+    result = session.query(Items).filter(Items.id == id).first()
+    session.close()
+    return result
+
+def delete(id):
+    session = DBSession()
+    session.delete(get(id))
+    session.commit()
+    session.close()
