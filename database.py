@@ -16,7 +16,8 @@ class Items(Base):
     name = Column(String(30), nullable = False)
     quantity = Column(Integer, nullable = False)
 
-engine = create_engine('postgresql+psycopg2://user:user@localhost:5432/test')
+connect_str = 'postgresql+psycopg2://user:user@localhost:5432/test'
+engine = create_engine(connect_str)
 DBSession = sessionmaker(bind = engine)
 #create table
 #Base.metadata.create_all(engine)
@@ -42,6 +43,17 @@ def get(id):
 
 def delete(id):
     session = DBSession()
-    session.delete(get(id))
+    session.query(Items).filter(Items.id == id).delete()
+    #session.delete(get(id))
+    session.commit()
+    session.close()
+
+def update(id, name, quantity):
+    session = DBSession()
+    items = session.query(Items).filter(Items.id == id)
+    if name != None:
+        items.update({'name':name})
+    if quantity != None:
+        items.update({'quantity':quantity})
     session.commit()
     session.close()

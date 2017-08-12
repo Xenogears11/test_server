@@ -19,7 +19,7 @@ class MainHandler(tornado.web.RequestHandler):
             r = database.get(int(id))
             self.write(dict(r.id, r.name, r.quantity))
 
-    def post(self):
+    def put(self):
         #print(self.request)
         name = self.get_argument('name')
         quantity = self.get_argument('quantity')
@@ -30,7 +30,15 @@ class MainHandler(tornado.web.RequestHandler):
         id = self.get_argument('id')
         database.delete(int(id))
 
+    def patch(self):
+        id = self.get_argument('id')
+        name = self.get_argument('name', default = None)
+        quantity = self.get_argument('quantity', default = None)
+        if name == None and quantity == None:
+            return
+        database.update(int(id), name, quantity)
 
+#returns vars as dictionary
 def dict(id, name, quantity):
     return {'id':id, 'name':name, 'quantity':quantity}
 
